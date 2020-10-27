@@ -1,5 +1,6 @@
 package com.example.professor_allocation;
 
+import com.example.professor_allocation.service.DepartamentService;
 import com.example.professor_allocation.service.ProfessorService;
 
 import retrofit2.Retrofit;
@@ -18,6 +19,10 @@ public class RetrofitConfig {
 
     public ProfessorService getProfessorService(){
         return retrofit.create(ProfessorService.class);
+    }
+
+    public DepartamentService getDepartamentService(){
+        return retrofit.create(DepartamentService.class);
     }
 
 }
