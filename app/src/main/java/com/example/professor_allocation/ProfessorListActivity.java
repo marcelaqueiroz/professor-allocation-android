@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.professor_allocation.config.RetrofitConfig;
+import com.example.professor_allocation.config.RoomConfig;
 import com.example.professor_allocation.model.Departament;
 import com.example.professor_allocation.model.Professor;
 
@@ -18,14 +20,18 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProfessorListActivity extends AppCompatActivity {
+
     private RecyclerView recyclerView;
-    private List<Professor> professorsList = new ArrayList<>();
     private ProfessorAdapter professorAdapter;
+    private RoomConfig instance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_professor_list);
+
+        instance = RoomConfig.getInstance(this);
 
         recyclerView = findViewById(R.id.recyclerViewProf);
         professorAdapter = new ProfessorAdapter(this, new ArrayList<Professor>());
@@ -36,10 +42,12 @@ public class ProfessorListActivity extends AppCompatActivity {
         getAllProfessors(new RequestResult() {
             @Override
             public <T> void returnSuccess(T requestResult) {
-                professorsList = (List<Professor>) requestResult;
 
-                professorAdapter = new ProfessorAdapter(ProfessorListActivity.this, professorsList);
+                List<Professor> pList = instance.professorDAO().getAllProfessors();
+
+                professorAdapter = new ProfessorAdapter(ProfessorListActivity.this, pList);
                 recyclerView.setAdapter(professorAdapter);
+
             }
 
             @Override
@@ -75,7 +83,7 @@ public class ProfessorListActivity extends AppCompatActivity {
         });
     }
 
-    private void getAllProfessors(final RequestResult listner) {
+    private void getAllProfessors(final RequestResult requestResult) {
 
         Call<List<Professor>> call = new RetrofitConfig().getProfessorService().getAllProfessors();
 
@@ -83,13 +91,15 @@ public class ProfessorListActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Professor>> call, Response<List<Professor>> response) {
                 List<Professor> professorsList = response.body();
-                listner.returnSuccess(professorsList);
+                instance.professorDAO().insertAllProfessors(professorsList);
+                requestResult.returnSuccess(professorsList);
+
 
             }
 
             @Override
             public void onFailure(Call<List<Professor>> call, Throwable t) {
-                listner.returnError("Erro na requisição! Error Message: \n" + t.getMessage());
+                requestResult.returnError("Falha na requisição! Error Message: \n" + t.getMessage());
 
             }
         });

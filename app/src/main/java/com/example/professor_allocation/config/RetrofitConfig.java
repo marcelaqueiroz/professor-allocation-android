@@ -1,4 +1,4 @@
-package com.example.professor_allocation;
+package com.example.professor_allocation.config;
 
 import com.example.professor_allocation.service.DepartamentService;
 import com.example.professor_allocation.service.ProfessorService;

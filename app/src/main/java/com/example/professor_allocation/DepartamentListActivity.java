@@ -7,8 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.professor_allocation.config.RetrofitConfig;
+import com.example.professor_allocation.config.RoomConfig;
 import com.example.professor_allocation.model.Departament;
-import com.example.professor_allocation.model.Professor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +19,17 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DepartamentListActivity extends AppCompatActivity {
+
     private RecyclerView recyclerView;
-    private List<Departament> departamentList = new ArrayList<>();
     private DepartamentAdapter departamentAdapter;
+    private RoomConfig instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_departament_list);
+
+        instance = RoomConfig.getInstance(this);
 
         recyclerView = findViewById(R.id.recyclerViewDep);
         departamentAdapter = new DepartamentAdapter(this, new ArrayList<Departament>());
@@ -35,9 +39,9 @@ public class DepartamentListActivity extends AppCompatActivity {
         getAllDepartaments(new RequestResult() {
             @Override
             public <T> void returnSuccess(T requestResult) {
-                departamentList = (List<Departament>) requestResult;
+                List<Departament> dList = instance.departamentDAO().getAllDepartament();
 
-                departamentAdapter = new DepartamentAdapter(DepartamentListActivity.this, departamentList);
+                departamentAdapter = new DepartamentAdapter(DepartamentListActivity.this, dList);
                 recyclerView.setAdapter(departamentAdapter);
             }
 
@@ -70,7 +74,7 @@ public class DepartamentListActivity extends AppCompatActivity {
         });
     }
 
-    private void getAllDepartaments(final RequestResult listner) {
+    private void getAllDepartaments(final RequestResult requestResult) {
 
         Call<List<Departament>> call = new RetrofitConfig().getDepartamentService().getAllDepartament();
 
@@ -78,13 +82,13 @@ public class DepartamentListActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Departament>> call, Response<List<Departament>> response) {
                 List<Departament> departamentsList = response.body();
-                listner.returnSuccess(departamentsList);
-
+                instance.departamentDAO().insertAllDepartament(departamentsList);
+                requestResult.returnSuccess(departamentsList);
             }
 
             @Override
             public void onFailure(Call<List<Departament>> call, Throwable t) {
-                listner.returnError("Erro na requisição! Error Message: \n" + t.getMessage());
+                requestResult.returnError("Falha na requisição! Error Message: \n" + t.getMessage());
 
             }
         });
