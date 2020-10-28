@@ -7,12 +7,16 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
+import com.example.professor_allocation.model.Allocation;
+import com.example.professor_allocation.model.Course;
 import com.example.professor_allocation.model.Departament;
 import com.example.professor_allocation.model.Professor;
+import com.example.professor_allocation.service.AllocationDAO;
+import com.example.professor_allocation.service.CourseDAO;
 import com.example.professor_allocation.service.DepartamentDAO;
 import com.example.professor_allocation.service.ProfessorDAO;
 
-@Database(entities = {Professor.class, Departament.class}, version = 1)
+@Database(entities = {Professor.class, Departament.class, Course.class, Allocation.class}, version = 2)
 @TypeConverters(Converters.class)
 public abstract class RoomConfig extends RoomDatabase {
 
@@ -20,6 +24,8 @@ public abstract class RoomConfig extends RoomDatabase {
 
     public abstract ProfessorDAO professorDAO();
     public abstract DepartamentDAO departamentDAO();
+    public abstract CourseDAO courseDAO();
+    public abstract AllocationDAO allocationDAO();
 
     public static RoomConfig getInstance(Context context){
 

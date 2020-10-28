@@ -1,4 +1,4 @@
-package com.example.professor_allocation;
+package com.example.professor_allocation.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.professor_allocation.R;
+import com.example.professor_allocation.RequestResult;
 import com.example.professor_allocation.config.RetrofitConfig;
 import com.example.professor_allocation.config.RoomConfig;
 import com.example.professor_allocation.model.Departament;
